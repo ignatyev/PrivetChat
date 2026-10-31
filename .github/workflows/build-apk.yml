@@ -35,6 +35,9 @@ jobs:
       - name: Enable offline TV commands
         run: python3 patches/v06/apply.py
 
+      - name: Add delivery feedback and update version
+        run: python3 patches/v07/apply.py
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
@@ -54,6 +57,25 @@ jobs:
         with:
           gradle-version: '8.13'
 
+      - name: Validate compilation without signing
+        run: gradle --no-daemon --stacktrace :app:assembleRelease
+
+      - name: Restore permanent signing key from repository secret
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.PRIVETCHAT_SIGNING_KEYSTORE_B64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::error::Set repository Actions secret PRIVETCHAT_SIGNING_KEYSTORE_B64 first. See SIGNING.md"
+            exit 1
+          fi
+          mkdir -p "$HOME/.android"
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$HOME/.android/debug.keystore"
+          chmod 600 "$HOME/.android/debug.keystore"
+          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey >/dev/null
+          echo "Stable signing key available. Never print or upload it."
+
       - name: Build Android APK
         run: gradle --no-daemon --stacktrace :app:assembleDebug
 
@@ -65,7 +87,7 @@ jobs:
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: PrivetChat-Assistant-v0.6-Haier-debug-apk
+          name: PrivetChat-Assistant-v0.7-Haier-feedback-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
