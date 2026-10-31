@@ -44,6 +44,9 @@ jobs:
       - name: Add screen-off haptic acknowledgement
         run: python3 patches/v09/apply.py
 
+      - name: Keep continuous TV control until voice exit
+        run: python3 patches/v10/apply.py
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
@@ -93,7 +96,7 @@ jobs:
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: PrivetChat-Assistant-v0.9-haptic-feedback-apk
+          name: PrivetChat-Assistant-v0.10-continuous-tv-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
