@@ -2,7 +2,7 @@ name: Build Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, feature/haier-tv-voice]
 
 permissions:
   contents: read
@@ -31,6 +31,9 @@ jobs:
 
       - name: Enable persistent background wake-word listening
         run: python3 patches/v05/apply.py
+
+      - name: Enable offline TV commands
+        run: python3 patches/v06/apply.py
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -62,7 +65,7 @@ jobs:
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: PrivetChat-Assistant-v0.5-debug-apk
+          name: PrivetChat-Assistant-v0.6-Haier-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
