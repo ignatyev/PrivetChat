@@ -29,6 +29,9 @@ jobs:
       - name: Add lock-screen unlock relay
         run: python3 patches/v04/apply.py
 
+      - name: Enable persistent background wake-word listening
+        run: python3 patches/v05/apply.py
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
@@ -59,7 +62,7 @@ jobs:
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: PrivetChat-Assistant-v0.4-debug-apk
+          name: PrivetChat-Assistant-v0.5-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
