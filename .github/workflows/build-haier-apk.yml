@@ -1,0 +1,88 @@
+name: Build Haier Remote 1.9 (unsigned)
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/haier-tv-voice
+    paths:
+      - haier-source/**
+      - .github/workflows/build-haier-apk.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Restore Haier 1.9 Android project
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 --decode haier-source/haier-remote-1.9.tar.br.b64 > /tmp/haier.tar.br
+          echo "f9aa3407416f6f029583fe62b3a022beaef790681a2d6ee83b375994b87fbbc7  /tmp/haier.tar.br" | sha256sum --check
+          python3 -m venv /tmp/haier-env
+          /tmp/haier-env/bin/pip --quiet install brotli
+          /tmp/haier-env/bin/python - <<'PY'
+          import io, tarfile, brotli
+          with open("/tmp/haier.tar.br", "rb") as f:
+              unpacked = brotli.decompress(f.read())
+          with tarfile.open(fileobj=io.BytesIO(unpacked), mode="r:") as tar:
+              members = tar.getmembers()
+              assert members and all(m.name.startswith("haier-remote/") and not m.issym() and not m.islnk() and ".." not in m.name.split("/") for m in members)
+              tar.extractall()
+          PY
+          test -f haier-remote/app/build.gradle
+          test -f haier-remote/app/src/main/java/ru/haier/remote/VoiceCommandReceiver.java
+          test ! -e haier-remote/signing/debug.keystore
+
+      - name: Install Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 35 and Build Tools
+        shell: bash
+        run: |
+          sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0'
+
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Compile unsigned release APK
+        working-directory: haier-remote
+        run: gradle --no-daemon :app:assembleRelease
+
+      - name: Run protocol unit tests
+        working-directory: haier-remote
+        run: bash verification/run.sh
+
+      - name: Prepare aligned APK and signer utility
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          APK=haier-remote/app/build/outputs/apk/release/app-release-unsigned.apk
+          test -s "$APK"
+          "$SDK_ROOT/build-tools/35.0.0/zipalign" -f 4 "$APK" output/Haier-Remote-1.9-unsigned-aligned.apk
+          cp "$SDK_ROOT/build-tools/35.0.0/lib/apksigner.jar" output/apksigner.jar
+          ls -lh output
+
+      - name: Upload artifacts for local original-key signing
+        uses: actions/upload-artifact@v4
+        with:
+          name: Haier-Remote-1.9-unsigned-and-apksigner
+          path: output/*
+          if-no-files-found: error
+          retention-days: 30
