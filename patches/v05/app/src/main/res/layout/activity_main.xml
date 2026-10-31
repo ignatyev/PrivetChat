@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F8FAFC">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Привет, Чат · v0.5"
+            android:textStyle="bold"
+            android:textSize="28sp"
+            android:textColor="#111827" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Голосовая активация в фоне и автоматическое возобновление"
+            android:textSize="15sp"
+            android:textColor="#475569" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:padding="18dp"
+            android:text="Проверка настроек…"
+            android:textSize="17sp"
+            android:textColor="#0F172A"
+            android:background="#E2E8F0" />
+
+        <Switch
+            android:id="@+id/listenSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:paddingVertical="12dp"
+            android:text="Постоянное прослушивание"
+            android:textSize="17sp"
+            android:textColor="#111827"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Включается один раз после настройки. Выключение сохраняется после перезагрузки. Во время разговора ChatGPT микрофон освобождается."
+            android:textSize="14sp"
+            android:textColor="#475569" />
+
+        <Button
+            android:id="@+id/chooseAssistant"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Выбрать системного помощника" />
+
+        <Button
+            android:id="@+id/accessibilitySettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Настроить автоматический запуск Voice" />
+
+        <Button
+            android:id="@+id/openChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Открыть ChatGPT" />
+
+        <TextView
+            android:id="@+id/lastWords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Помощник: проверка…"
+            android:textColor="#64748B"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Скажи «Привет, Чат», даже с выключенным экраном. После запуска ChatGPT прослушивание приостанавливается и автоматически возвращается, когда голосовой ввод заканчивается. На некоторых версиях Android обнаружение завершения разговора может быть неточным. Постоянное использование микрофона увеличивает расход батареи."
+            android:textSize="14sp"
+            android:textColor="#334155"
+            android:lineSpacingExtra="4dp" />
+    </LinearLayout>
+</ScrollView>
