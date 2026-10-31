@@ -78,7 +78,7 @@ internal object VoiceCommandRouter {
         phrases.addAll(gptNames)
         phrases.addAll(commands.keys)
         phrases.add("[unk]")
-        return phrases.joinToString(prefix = "[\\"", postfix = "\"]",
+        return phrases.joinToString(prefix = "[\"", postfix = "\"]",
             separator = "\",\"")
     }
 }
