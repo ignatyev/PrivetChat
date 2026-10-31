@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_voice_description">По вашей голосовой команде «Привет, Чат» нажимает только кнопку голосового разговора в ChatGPT. Не сохраняет текст переписки.</string>
+</resources>
